@@ -13,7 +13,7 @@ module SimpleCov
 
     def initialize(filename, coverage_data)
       @filename = filename
-      @coverage_data = coverage_data
+      @coverage_data = uncover(coverage_data)
     end
 
     # The path to this source file relative to the projects directory
@@ -371,6 +371,25 @@ module SimpleCov
           missed: missed_methods.size
         )
       }
+    end
+
+    def uncover(coverage)
+      return coverage if coverage.is_a?(Array) || coverage[:lines].nil?
+
+      lines = coverage[:lines].dup
+      coverage[:branches]&.each do |branch, counts|
+        next if counts.values.all?(&:positive?) || branch[2] != branch[4] # start, end lines
+
+        lines[branch[2] - 1] = 0
+      end
+
+      coverage[:methods]&.each do |method, count|
+        next if count.positive? || method[2] != method[4] # start, end lines
+
+        lines[method[2] - 1] = 0
+      end
+
+      coverage.merge(lines: lines)
     end
   end
 end

@@ -8,9 +8,26 @@ describe SimpleCov::SourceFile do
     branches: {}
   }.freeze
 
+  COVERAGE_FOR_MUNGED_SAMPLE_RB = {
+    lines: [nil, 1, 1, 3, nil, nil, 1, 4, nil, nil, nil, 1, 0, nil, nil, nil],
+    branches: {[:if, 3, 8, 6, 8, 36] => {[:then, 4, 8, 6, 8, 12] => 0, [:else, 5, 8, 6, 8, 36] => 24}}, # Not covered
+    methods: {["#<Class:FakedProject>", "foo", 4, 2, 4, 5] => 0}
+  }.freeze
+
   COVERAGE_FOR_SAMPLE_RB_WITH_MORE_LINES = {
     lines: [nil, 1, 1, 1, nil, nil, 1, 0, nil, nil, nil, nil, nil, nil, nil, nil, nil]
   }.freeze
+
+  describe "munging line results to reflect missing partial coverage" do
+    subject do
+      SimpleCov::SourceFile.new(source_fixture("sample.rb"), COVERAGE_FOR_MUNGED_SAMPLE_RB)
+    end
+
+    it "returns lines 4 & 8 for missed_lines" do
+      # NOTE: 4 and 8 are both munged out in this case, see below for a regular missed line
+      expect(subject.missed_lines.map(&:line)).to eq([4, 8])
+    end
+  end
 
   context "a source file initialized with some coverage data" do
     subject do
@@ -48,7 +65,7 @@ describe SimpleCov::SourceFile do
     end
 
     describe "line coverage" do
-      it "returns lines number 2, 3, 4, 7 for covered_lines" do
+      it "returns lines number 2, 3, 4, 7, 8 for covered_lines" do
         expect(subject.covered_lines.map(&:line)).to eq([2, 3, 4, 7])
       end
 
@@ -116,9 +133,9 @@ describe SimpleCov::SourceFile do
         lines: [1, 1, 1, nil, 1, nil, 1, 0, nil, 1, nil, nil, nil],
         branches: {
           [:if, 0, 3, 4, 3, 21] =>
-            {[:then, 1, 3, 4, 3, 10] => 0, [:else, 2, 3, 4, 3, 21] => 1},
+            {[:then, 1, 3, 4, 3, 10] => 0, [:else, 2, 3, 4, 3, 21] => 1}, # not covered
           [:if, 3, 5, 4, 5, 26] =>
-            {[:then, 4, 5, 16, 5, 20] => 1, [:else, 5, 5, 23, 5, 26] => 0},
+            {[:then, 4, 5, 16, 5, 20] => 1, [:else, 5, 5, 23, 5, 26] => 0}, # not covered
           [:if, 6, 7, 4, 11, 7] =>
             {[:then, 7, 8, 6, 8, 10] => 0, [:else, 8, 10, 6, 10, 9] => 1}
         }
@@ -166,15 +183,15 @@ describe SimpleCov::SourceFile do
 
     describe "line coverage" do
       it "has line coverage" do
-        expect(subject.covered_percent).to be_within(0.01).of(85.71)
+        expect(subject.covered_percent).to be_within(0.01).of(57.14)
       end
 
-      it "has 6 covered lines" do
-        expect(subject.covered_lines.size).to eq 6
+      it "has 4 covered lines" do
+        expect(subject.covered_lines.size).to eq 4
       end
 
-      it "has 1 missed line" do
-        expect(subject.missed_lines.size).to eq 1
+      it "has 3 missed lines" do
+        expect(subject.missed_lines.size).to eq 3
       end
 
       it "has 7 relevant lines" do
@@ -424,7 +441,7 @@ describe SimpleCov::SourceFile do
         [:if, 0, 6, 4, 11, 7] =>
           {[:then, 1, 7, 6, 7, 7] => 0, [:else, 2, 10, 6, 10, 7] => 1},
         [:if, 3, 13, 4, 13, 24] =>
-          {[:then, 4, 13, 4, 13, 12] => 1, [:else, 5, 13, 4, 13, 24] => 0},
+          {[:then, 4, 13, 4, 13, 12] => 1, [:else, 5, 13, 4, 13, 24] => 0}, # Not covered
         [:while, 6, 16, 4, 16, 27] =>
           {[:body, 7, 16, 4, 16, 12] => 2},
         [:case, 8, 18, 4, 24, 7] => {
@@ -444,20 +461,20 @@ describe SimpleCov::SourceFile do
         expect(subject.relevant_lines).to eq(5)
       end
 
-      it "has 6 covered lines" do
-        expect(subject.covered_lines.size).to eq(5)
+      it "has 4 covered lines" do
+        expect(subject.covered_lines.size).to eq(4)
       end
 
-      it "has no missed lines" do
-        expect(subject.missed_lines.size).to eq(0)
+      it "has one missed line" do
+        expect(subject.missed_lines.size).to eq(1)
       end
 
       it "has a whole lot of skipped lines" do
         expect(subject.skipped_lines.size).to eq(11)
       end
 
-      it "has 100.0 covered_percent" do
-        expect(subject.covered_percent).to eq 100.0
+      it "has 80.0 covered_percent" do
+        expect(subject.covered_percent).to eq 80.0
       end
     end
 
@@ -647,9 +664,9 @@ describe SimpleCov::SourceFile do
       lines: [nil, nil, 1, 1, nil, 1, nil, 1, 1, nil, nil, 1, 0, nil, nil, 1, 0, nil, 1, nil, nil, 1, 1, 1, nil, nil, 1, 0, nil, nil, 1, 1, nil, 0, nil, 1, 1, 0, 0, 1, 5, 0, 0, nil, 0, nil, 0, nil, nil, nil],
       branches: {
         [:if, 0, 4, 0, 4, 19] =>
-          {[:then, 1, 4, 12, 4, 15] => 0, [:else, 2, 4, 18, 4, 19] => 1},
+          {[:then, 1, 4, 12, 4, 15] => 0, [:else, 2, 4, 18, 4, 19] => 1}, # Not covered
         [:unless, 3, 6, 0, 6, 23] =>
-          {[:else, 4, 6, 0, 6, 23] => 0, [:then, 5, 6, 0, 6, 6] => 1},
+          {[:else, 4, 6, 0, 6, 23] => 0, [:then, 5, 6, 0, 6, 6] => 1}, # Not covered
         [:unless, 6, 8, 0, 10, 3] =>
           {[:else, 7, 8, 0, 10, 3] => 0, [:then, 8, 9, 2, 9, 14] => 1},
         [:unless, 9, 12, 0, 14, 3] =>
@@ -657,7 +674,7 @@ describe SimpleCov::SourceFile do
         [:unless, 12, 16, 0, 20, 3] =>
           {[:else, 13, 19, 2, 19, 13] => 1, [:then, 14, 17, 2, 17, 14] => 0},
         [:if, 15, 22, 0, 22, 19] =>
-          {[:then, 16, 22, 0, 22, 6] => 0, [:else, 17, 22, 0, 22, 19] => 1},
+          {[:then, 16, 22, 0, 22, 6] => 0, [:else, 17, 22, 0, 22, 19] => 1}, # Not covered
         [:if, 18, 23, 0, 25, 3] =>
           {[:then, 19, 24, 2, 24, 14] => 1, [:else, 20, 23, 0, 25, 3] => 0},
         [:if, 21, 27, 0, 29, 3] =>
@@ -678,9 +695,9 @@ describe SimpleCov::SourceFile do
     end
 
     describe "line coverage" do
-      it "covers 18/28" do
+      it "covers 15/28" do
         expect(subject.relevant_lines).to eq 28
-        expect(subject.covered_lines.size).to eq 18
+        expect(subject.covered_lines.size).to eq 15
       end
     end
 
