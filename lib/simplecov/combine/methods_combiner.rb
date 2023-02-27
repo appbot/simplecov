@@ -26,6 +26,16 @@ module SimpleCov
 
         result_coverage
       end
+
+      def uncover(method_cover, lines)
+        method_cover&.each do |method, count|
+          next if count.positive? || method[2] != method[4] # start, end lines
+
+          lines[method[2]] = 0
+        end
+
+        lines
+      end
     end
   end
 end

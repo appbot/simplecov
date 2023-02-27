@@ -11,8 +11,8 @@ describe SimpleCov::Combine::ResultsCombiner do
           branches: {[:if, 3, 8, 6, 8, 36] => {[:then, 4, 8, 6, 8, 12] => 47, [:else, 5, 8, 6, 8, 36] => 24}}
         },
         source_fixture("app/models/user.rb") => {
-          lines: [nil, 1, 1, 1, nil, nil, 1, 0, nil, nil],
-          branches: {[:if, 3, 8, 6, 8, 36] => {[:then, 4, 8, 6, 8, 12] => 47, [:else, 5, 8, 6, 8, 36] => 24}},
+          lines: [nil, 1, 1, 1, nil, nil, 1, 0, 8, nil],
+          branches: {[:if, 3, 8, 6, 8, 36] => {[:then, 4, 8, 6, 8, 12] => 0, [:else, 5, 8, 6, 8, 36] => 24}},
           methods: {["#<Class:FakedProject>", "foo", 4, 2, 6, 5] => 1}
         },
         source_fixture("app/controllers/sample_controller.rb") => {lines: [nil, 1, 1, 1, nil, nil, 1, 0, nil, nil]},
@@ -27,9 +27,9 @@ describe SimpleCov::Combine::ResultsCombiner do
       {
         source_fixture("sample.rb") => {lines: [1, nil, 1, 1, nil, nil, 1, 1, nil, nil]},
         source_fixture("app/models/user.rb") => {
-          lines: [nil, 1, 5, 1, nil, nil, 1, 0, nil, nil],
-          branches: {[:if, 3, 8, 6, 8, 36] => {[:then, 4, 8, 6, 8, 12] => 1, [:else, 5, 8, 6, 8, 36] => 2}},
-          methods: {["#<Class:FakedProject>", "foo", 4, 2, 6, 5] => 5, ["#<Class:FakedProject>", "bar", 1, 2, 3, 4] => 3}
+          lines: [nil, 1, 5, 1, nil, nil, 1, 0, 2, nil],
+          branches: {[:if, 3, 8, 6, 8, 36] => {[:then, 4, 8, 6, 8, 12] => 0, [:else, 5, 8, 6, 8, 36] => 2}},
+          methods: {["#<Class:FakedProject>", "foo", 4, 2, 6, 5] => 5, ["#<Class:FakedProject>", "bar", 1, 2, 1, 4] => 0}
         },
         source_fixture("app/controllers/sample_controller.rb") => {lines: [nil, 3, 1, nil, nil, nil, 1, 0, nil, nil]},
         source_fixture("resultset2.rb") => {lines: [nil, 1, 1, nil]},
@@ -68,14 +68,14 @@ describe SimpleCov::Combine::ResultsCombiner do
       end
 
       it "has proper results for user.rb" do
-        expect(subject[source_fixture("app/models/user.rb")][:lines]).to eq([nil, 2, 6, 2, nil, nil, 2, 0, nil, nil])
+        expect(subject[source_fixture("app/models/user.rb")][:lines]).to eq([nil, 0, 6, 2, nil, nil, 2, 0, 0, nil])
 
         if SimpleCov.branch_coverage_supported?
-          expect(subject[source_fixture("app/models/user.rb")][:branches][[:if, 3, 8, 6, 8, 36]][[:then, 4, 8, 6, 8, 12]]).to eq(48)
+          expect(subject[source_fixture("app/models/user.rb")][:branches][[:if, 3, 8, 6, 8, 36]][[:then, 4, 8, 6, 8, 12]]).to eq(0)
           expect(subject[source_fixture("app/models/user.rb")][:branches][[:if, 3, 8, 6, 8, 36]][[:else, 5, 8, 6, 8, 36]]).to eq(26)
           expect(subject[source_fixture("app/models/user.rb")][:methods]).to eq(
             ["#<Class:FakedProject>", "foo", 4, 2, 6, 5] => 6,
-            ["#<Class:FakedProject>", "bar", 1, 2, 3, 4] => 3
+            ["#<Class:FakedProject>", "bar", 1, 2, 1, 4] => 0
           )
         end
       end

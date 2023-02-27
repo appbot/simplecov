@@ -27,6 +27,16 @@ module SimpleCov
           end
         end
       end
+
+      def uncover(branch_cover, lines)
+        branch_cover&.each do |branch, counts|
+          next if counts.values.all?(&:positive?) || branch[2] != branch[4] # start, end lines
+
+          lines[branch[2]] = 0
+        end
+
+        lines
+      end
     end
   end
 end
