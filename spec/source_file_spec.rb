@@ -183,15 +183,15 @@ describe SimpleCov::SourceFile do
 
     describe "line coverage" do
       it "has line coverage" do
-        expect(subject.covered_percent).to be_within(0.01).of(57.14)
+        expect(subject.covered_percent).to be_within(0.01).of(42.85)
       end
 
-      it "has 4 covered lines" do
-        expect(subject.covered_lines.size).to eq 4
+      it "has 3 covered lines" do
+        expect(subject.covered_lines.size).to eq 3
       end
 
-      it "has 3 missed lines" do
-        expect(subject.missed_lines.size).to eq 3
+      it "has 4 missed lines" do
+        expect(subject.missed_lines.size).to eq 4
       end
 
       it "has 7 relevant lines" do
@@ -514,7 +514,7 @@ describe SimpleCov::SourceFile do
 
     describe "line coverage" do
       it "covers 6/7" do
-        expect(subject.covered_percent).to be_within(0.01).of(85.71)
+        expect(subject.covered_percent).to be_within(0.01).of(57.14)
       end
     end
 
@@ -549,10 +549,10 @@ describe SimpleCov::SourceFile do
     end
 
     describe "line coverage" do
-      it "covers 4/7" do
+      it "covers 3/7" do
         expect(subject.relevant_lines).to eq 7
-        expect(subject.covered_lines.size).to eq 4
-        expect(subject.missed_lines.size).to eq 3
+        expect(subject.covered_lines.size).to eq 3
+        expect(subject.missed_lines.size).to eq 4
       end
     end
 
@@ -592,10 +592,10 @@ describe SimpleCov::SourceFile do
     end
 
     describe "line coverage" do
-      it "covers 4/6" do
+      it "covers 3/6" do
         expect(subject.relevant_lines).to eq 6
-        expect(subject.covered_lines.size).to eq 4
-        expect(subject.missed_lines.size).to eq 2
+        expect(subject.covered_lines.size).to eq 3
+        expect(subject.missed_lines.size).to eq 3
       end
     end
 
@@ -639,10 +639,10 @@ describe SimpleCov::SourceFile do
     end
 
     describe "line coverage" do
-      it "covers 6/9" do
+      it "covers 3/9" do
         expect(subject.relevant_lines).to eq 9
-        expect(subject.covered_lines.size).to eq 6
-        expect(subject.missed_lines.size).to eq 3
+        expect(subject.covered_lines.size).to eq 3
+        expect(subject.missed_lines.size).to eq 6
       end
     end
 
@@ -695,9 +695,9 @@ describe SimpleCov::SourceFile do
     end
 
     describe "line coverage" do
-      it "covers 15/28" do
+      it "covers 7/28" do
         expect(subject.relevant_lines).to eq 28
-        expect(subject.covered_lines.size).to eq 15
+        expect(subject.covered_lines.size).to eq 7
       end
     end
 
@@ -763,11 +763,11 @@ describe SimpleCov::SourceFile do
       lines: [1, 1, nil, 1, 0, 1, 0, nil, 1, 1, nil, nil, 0, nil, nil, nil],
       branches: {
         [:if, 0, 9, 4, 13, 10] =>
-          {[:then, 1, 10, 6, 10, 10] => 1, [:else, 2, 13, 6, 13, 10] => 0},
+          {[:then, 1, 10, 6, 10, 10] => 1, [:else, 2, 13, 6, 13, 10] => 2},
         [:if, 3, 6, 4, 13, 10] =>
-          {[:then, 4, 7, 6, 7, 10] => 0, [:else, 5, 9, 4, 13, 10] => 1},
+          {[:then, 4, 7, 6, 7, 10] => 1, [:else, 5, 9, 4, 13, 10] => 1},
         [:if, 6, 4, 4, 14, 7] =>
-          {[:then, 7, 5, 6, 5, 10] => 0, [:else, 8, 6, 4, 13, 10] => 1}
+          {[:then, 7, 5, 6, 5, 10] => 1, [:else, 8, 6, 4, 13, 10] => 1}
       }
     }.freeze
 

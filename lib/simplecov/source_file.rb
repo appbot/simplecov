@@ -378,7 +378,7 @@ module SimpleCov
 
       lines = coverage[:lines].dup
       coverage[:branches]&.each do |branch, counts|
-        next if counts.values.all?(&:positive?) || branch[2] != branch[4] # start, end lines
+        next if counts.values.all?(&:positive?)
 
         lines[branch[2] - 1] = 0
       end
