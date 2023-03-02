@@ -380,7 +380,11 @@ module SimpleCov
       coverage[:branches]&.each do |branch, counts|
         next if counts.values.all?(&:positive?)
 
-        lines[branch[2] - 1] = 0
+        if branch[2]
+          lines[branch[2] - 1] = 0
+        elsif coverage[:branches][0] && coverage[:branches][0][2]
+          lines[coverage[:branches][0][2] - 1] = 0
+        end
       end
 
       coverage[:methods]&.each do |method, count|
